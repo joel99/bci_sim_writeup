@@ -1,0 +1,285 @@
+\documentclass[11pt, letterpaper]{cmu}
+
+\usepackage[all]{hypcap}
+\usepackage[comma,numbers,sort,compress]{natbib}
+\usepackage{hyperref}[citecolor=magenta]
+
+\hypersetup{
+    colorlinks = true,
+    citecolor = {magenta},
+}
+
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{booktabs}
+\usepackage{float}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{amsthm}
+\usepackage{mathrsfs}
+\usepackage{nicefrac}
+\usepackage{dsfont}
+\usepackage{enumitem}
+% \usepackage{minted}
+\usepackage{float}
+
+\setlength\parindent{0pt}
+% \setminted[python]{frame=lines, breaklines, framesep=2mm, fontsize=\footnotesize, numbersep=5pt}
+
+\usepackage{xspace}
+\usepackage[capitalize,noabbrev]{cleveref}
+\bibliographystyle{plainnat}
+\usepackage{subcaption}
+\usepackage{wrapfig}
+\usepackage{lipsum}
+\usepackage{listings}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{amsthm}
+\usepackage{bbm}
+\usepackage{fleqn, tabularx}
+\usepackage{multirow}
+\usepackage[export]{adjustbox}
+\usepackage{colortbl}
+
+\usepackage{algpseudocode}
+\usepackage{setspace}
+
+\usepackage{color}
+\definecolor{deepblue}{rgb}{0,0,0.5}
+\definecolor{deepred}{rgb}{0.6,0,0}
+\definecolor{deepgreen}{rgb}{0,0.5,0}
+\definecolor{boost_correct_to_correct}{HTML}{66C2A5}
+\definecolor{default_correct_to_correct}{HTML}{fc8d62}
+\definecolor{dup_correct_to_correct}{HTML}{8da0cb}
+\definecolor{new_correct_to_correct}{HTML}{e78ac3}
+
+\newcommand\pythonstyle{\lstset{
+basicstyle=\ttfamily\footnotesize,
+language=Python,
+morekeywords={self, clip, exp, mse_loss, uniform_sample, concatenate, logsumexp},
+keywordstyle=\color{deepblue},
+emph={MyClass,__init__},
+emphstyle=\color{deepred},
+stringstyle=\color{deepgreen},
+frame=single,
+showstringspaces=false
+}}
+
+
+\lstnewenvironment{python}[1][]
+{
+\pythonstyle
+\lstset{#1}
+}
+{}
+
+
+\newcommand\pythonexternal[2][]{{
+\pythonstyle
+\lstinputlisting[#1]{#2}}}
+
+\newcommand\pythoninline[1]{{\pythonstyle\lstinline!#1!}}
+
+
+\input{macro}
+
+\makeatletter
+\def\mathcolor#1#{\@mathcolor{#1}}
+\def\@mathcolor#1#2#3{%
+  \protect\leavevmode
+  \begingroup
+    \color#1{#2}#3%
+  \endgroup
+}
+\makeatother
+
+\usepackage[textsize=tiny]{todonotes}
+\usepackage{algorithm}
+\usepackage{amssymb}
+
+
+\usepackage[skins,theorems]{tcolorbox}
+\Crefformat{equation}{#2Eq.\;(#1)#3}
+
+\Crefformat{figure}{#2Figure #1#3}
+\Crefformat{assumption}{#2Assumption #1#3}
+\Crefname{assumption}{Assumption}{Assumptions}
+
+\usepackage{crossreftools}
+\pdfstringdefDisableCommands{
+    \let\Cref\crtCref
+    \let\cref\crtcref
+}
+\newcommand{\creftitle}[1]{\crtcref{#1}}
+
+\usepackage[suppress]{color-edits}
+
+\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
+
+\usepackage{dsfont}
+\usepackage{nicefrac}
+
+\newtcolorbox{analysisbox}[1][]{
+    enhanced jigsaw,
+    colback=white,
+    colframe=blue!75!black,
+    fonttitle=\bfseries,
+    boxsep=5pt,
+    left=5pt,
+    right=5pt,
+    top=5pt,
+    bottom=5pt,
+    title=#1,
+}
+\newcommand{\mistake}[1]{\sethlcolor{highlightmistake}\hl{#1}\sethlcolor{yellow}}
+\newcommand{\correct}[1]{\sethlcolor{highlightcorrect}\hl{#1}\sethlcolor{yellow}}
+\newcommand{\cmark}{\ding{51}}
+\newcommand{\xmark}{\ding{55}}
+
+\tcbset{
+  aibox/.style={
+    width=\linewidth,
+    top=8pt,
+    bottom=4pt,
+    colback=blue!6!white,
+    colframe=black,
+    colbacktitle=black,
+    enhanced,
+    center,
+    attach boxed title to top left={yshift=-0.1in,xshift=0.15in},
+    boxed title style={boxrule=0pt,colframe=white,},
+  }
+}
+\newtcolorbox{AIbox}[2][]{aibox,title=#2,#1}
+\definecolor{lightblue}{rgb}{0.22,0.45,0.70}% light blue
+
+\usepackage{pifont}
+\usepackage{soul}
+\definecolor{highlightmistake}{RGB}{255, 179, 179}
+\definecolor{highlightcorrect}{RGB}{179, 255, 179}
+\newcommand{\rr}[1]{\textbf{\color{green}[RR: #1]}}
+
+\title{A NeuroAI-derived Brain-Computer Interface Simulator}
+
+% \reportnumber{}
+
+\author[1]{Joel Ye}
+
+
+\affil[1]{Carnegie Mellon University}
+
+\correspondingauthor{joelye9@gmail.com}
+
+\hyphenation{pre-print}
+
+\begin{abstract}
+We are interested in simulating BCI decoder controllability by evaluating control metrics with deep network policies. We have trained simple control policies in a cursor control environment, and trained simple BCI decoders on these network states. We show that control is equivalent between carefully altered decoders after allowing the policies to tune on BCI-control trajectories, simulating the user adaptation process.
+\end{abstract}
+
+\begin{document}
+
+\maketitle
+
+\section{Project Overview and Motivation}
+Current brain-computer interface research is prohibitively bottlenecked by the expense and inaccessibility of real world experiments. A key challenge in simulating these experiments is to account for human learning and adaptation to different BCI decoders. This project's goal is to emulate the outcome of user adaptation to different decoder algorithms by substituting the human for a deep network controller, and substituting human adaptation with deep RL. The problem formulation remains as proposed.
+
+\section{Progress and Technical Work So Far [13 points]}
+
+We have set up a codebase based on stable baselines, modifying their implementation of PPO (MLP + LSTM) to allow for integration of ``BCI decoders'' as controllers instead of the agent's native controller. The protocol of interest is as follows:
+\begin{itemize}
+\item Train a ``native control'' policy.
+\item Produce a static dataset of policy hidden states and actions in an evaluation environment.
+\item Train a BCI decoder from this static dataset, and optionally perturb it.
+\item Fine-tune the native control policy to convergence, with actions now generated by the BCI decoder instead of the native readout.
+\end{itemize}
+
+The key challenge was to reason about how to implement this fine-tuning step. While it was clear that the environment actions should be taken by the BCI decoded actions, it was unclear whether we should use the native policy or BCI actions in the RL updates. Since this RL tuning is not meant to emulate human adaptation, only its outcome, we could plausibly use the log-probabilities of generating different BCI actions. This is undesirable, however, for two reasons. First, such tuning would be ``privileged'' relative to human learning, seemingly allowing freeform adaptation of policy representations to adjust BCI decoder outputs, which likely doesn't occur in the brain. Second, it would restrict evaluation to differentiable decoders.
+
+The alternate strategy of using native policy actions was complicated due to the need for exploration. Most every RL strategy requires stochastic behavior in learning to discover which actions are better. However, this stochasticity is nearly universally introduced once the decoder produces a prediction. The issue then is that the network's internal state, which the BCI readout depends on, is deterministic, so environment transitions remain deterministic. On the other hand, if we solely noise the BCI action (as in DDPG), this noise is not reflected in the native-policy RL updates.
+
+The solution here is to noise the network state instead of the action readouts. Many RL algorithms (PPO/SAC) require explicit log probabilities of sampled actions, so we cannot afford to push noise deep into the network, but we can afford to push it to the penultimate hidden state before the native policy's linear action readout. Doing this, we can have noise alter the trajectories induced by arbitrary BCI decoders, while still having an analytically tractable log-prob for RL updates through the native policy head. I deem the need to restrict BCI readout to the final hidden representation an acceptable constraint (mainly because there is no clear alternative).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.6\linewidth]{figures/native_surgery.png}
+\caption{Environment actions are driven by native policy in pretraining but BCI in fine-tuning.}
+\label{fig:native_surgery}
+\end{figure}
+
+We test this in a 2D cursor control environment. Example trajectories are shown over tuning with a decoder that rotates the native readout by 90 degrees.
+
+\begin{figure}[H]
+\centering
+\subfigure[Init]{\includegraphics[width=0.32\linewidth]{figures/90_tune_0.png}}
+\subfigure[Halfway]{\includegraphics[width=0.32\linewidth]{figures/90_tune_50.png}}
+\subfigure[Converged]{\includegraphics[width=0.32\linewidth]{figures/90_tune_100.png}}
+\caption{Example control trajectories over tuning with a 90 degree rotated decoder.}
+\label{fig:90_tune}
+\end{figure}
+
+We also include training curves showing the reward progression of 45, 90, 180 degree decoders, as well as a \textit{random} decoder which \textit{cannot} be learned due to a lack of guaranteed correlations between the native action space and BCI readout space.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\linewidth]{figures/wmp_success.png}
+\caption{Tuning progress for 45, 90 degree rotations (trains quickly), 180 degree rotated decoders (very slow) and a random decoder (never nontrivial).}
+\label{fig:wmp_success}
+\end{figure}
+
+\begin{AIbox}{Takeaways box}
+% \footnotesize
+It is possible to train deep RL agents to control BCI decoders conditioned on the agent's hidden states, through optimization of the agent's native action space. Decoders that rotate the agent's native readout in a 2D environment can be compensated for with RL to restore full performance.
+\end{AIbox}
+
+
+\section{Datasets, Environments, and Resources [2 points]}
+\begin{itemize}
+    \item We currently use simple, custom point-reaching environments with sensorimotor noise. This emulates 1-2D cursor control environments frequently used in BCI testing. The initial state spawns the cursor in the center of the environment. Goal states are randomly placed locations in training, and radially arranged in evaluation. Datasets for training decoders (mapping from agent state to agent behavior) are created from evaluation trajectories.
+    \item All experiments to date have been CPU-only (seeing slowdowns on GPU, working to diagnose).
+\end{itemize}
+
+\section{Updated Plan and Next Steps [5 points]}
+
+My hope is to complete "broader project derisking" for the remainder of this semester. This entails the following:
+\begin{itemize}
+\item Train policies in either Mujoco (via MuSim~\citep{almani2024musim}) or MotorNet~\citep{codol2023motornet} (a simpler fallback), environments that create policies to actuate more detailed plants rather than kinematics directly. This control scheme is necessary to produce policies that resemble motor cortex~\citep{sussillo2015neural}.
+\item Demonstrate control quality differs from static dataset cloning metrics. Ideally, train nonlinear decoders -- either mechanically clamped linear decoders or deep network decoders I have worked with before~\citep{ye2025ndt3}, and demonstrate they can also be tuned for use, but control at convergence may not be as good as static metrics indicate.
+\item Stretch goal: Demonstrate both of the above together.
+\end{itemize}
+
+Once these are implemented, yes, there will be corresponding experiments to demonstrate each of these points. I expect light analysis in this proof of concept stage of the project. The writeup may be more in depth about methods and motivation.
+
+Risk mitigation: In case the native action space RL doesn't work in these more complex settings, the project may pivot to focus more on understanding the mechanism of action of why it does work in the simpler setting we've achieved so far.
+
+Next milestones:
+\begin{itemize}
+    \item Create a metric suite to produce plots that control plots used in BCI cursor control~\citep{Liang2024RLBCIsimulator}.
+    \item The above epochs.
+\end{itemize}
+
+\section{Team Contributions}
+
+I (Joel) am responsible for all components except for BCI decoder implementation. Said implementation is being provided by a collaborator outside the class, Chris Ki.
+
+\section{Reflection and Feedback}
+
+The issue with native policy optimization was unexpectedly technically subtle, so it was pretty satisfying to make progress on. (Effectively stalled the project for a few weeks...)
+
+I'd like for the scope for this project to exceed the class, so I decided to work on a fresh codebase, despite related work. This does make it seem, however, like I'm playing catch up with existing projects in the area that are not exactly on topic, but contain several existing results that I'd like to integrate, so it still feels little progress has been made relative to global knowledge.
+
+The timeline for the project is unfortunately short. I'm thankful other homeworks were cancelled, at least, but even better if the horizon for the project were somehow longer. It's tricky to parallelize work even with only one other collaborator, in the early stages of a research codebase.
+
+\bibliography{main}
+
+\newpage
+\appendix
+\onecolumn
+\part*{Appendices}
+
+\end{document}
