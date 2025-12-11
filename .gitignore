@@ -18,6 +18,7 @@
 
 # Generated PDF (uncomment if you don't want to track it)
 # *.pdf
+neurips_2024.pdf
 
 # Editor files
 *.swp
