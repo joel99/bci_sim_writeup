@@ -7,6 +7,7 @@
 \usepackage{url}
 \usepackage{amsfonts}
 \usepackage{microtype}
+\usepackage{graphicx}
 
 
 \title{A NeuroAI-derived Brain-Computer Interface Simulator}
@@ -29,38 +30,106 @@
 
 
 \begin{abstract}
-  Brain-computer interfaces (BCIs) are a promising technology for enabling communication and control of computers using the brain. However, the development of BCIs is currently limited by the expense and inaccessibility of real world experiments, which motivates the development of a simulation platform to evaluate BCI algorithms. Here, we explore a strategy for simulating BCI adaptation and control through a deep network controller trained with deep RL. Critically, our method avoids any reliance on pre-existing neural datasets, allowing for the evaluation of BCI algorithms in a fully synthetic environment.
-  TODO RESULTS statement.
-  TODO CONCLUSION statement.
+  Brain-computer interfaces (BCIs) are a promising technology for enabling communication and control of computers using the brain.
+  However, the development of BCIs is currently limited by the expense and inaccessibility of real world experiments, which motivates the development of a simulation platform to evaluate BCI algorithms.
+  Here, we explore a strategy for simulating user control and adaptation to different BCI decoders with a deep network controller that adapts with deep reinforcement learning (RL).
+  Critically, this method avoids any reliance on pre-existing neural datasets, allowing for the evaluation of BCI algorithms in a fully synthetic environment.
 
+  We show that RL-trained controllers adapt to linearly perturbed decoders in a 2D cursor task, matching native-control performance when decoders preserve structure and failing when correlations are destroyed.
+
+  Our exploration here demonstrates controllability evaluation without neural recordings, but with many limitations that we discuss in post.
 \end{abstract}
 
 
 \section{Introduction}
 
-P1.
-Intracortical brain-computer interfaces (iBCIs) are an emerging technology where electrodes implanted in the motor cortex record neural activity that can be used to decode a user's movement intention. BCI control can be achieved even with simple linear decoders, given the remarkably strong physiological connections between motor cortical activity and movement. Naturally, over two decades of research, researchers have proposed many decoders that achieve higher predictive performance on offline, static datasets, but evolution in the decoders used for online control has been much slower. The major reason for this disparity is the inaccessibility and expense of real-world experiments. Implanted BCIs are restricted to pre-clinical or clinical research and are thus studied in only a few dozen institutions worldwide. In each of these institutions, experiments work with one or two users for only a few hours a week while coordinating many different research priorities.
-These decoders are typically trained on a dataset of neural activity and
-BCI technology is the subject of a number of ongoing clinical trials (e.g. with Neuralink and Paradromics), as its invasive nature is justified by its demonstrated high performance potential. Nonetheless, this performance
-Must conclude by talking about prohibitve expense and need for simulation.
+Intracortical brain-computer interfaces (iBCIs) are an emerging technology where that convert a user's recorded neural activity into predictions of the user's behavioral intents. With good predictions, such BCIs can be used to control cursors, keyboards, or assistive devices. iBCIs that use electrodes directly implanted in the motor cortex show particularly promising performance, as they record high signal quality neural activity that can even be modeled with simple linear decoders.
+Naturally, over two decades of research, researchers have proposed many decoders that achieve higher predictive performance on offline, static datasets. This has only accelerated in recent years with the advent of larger neural datasets and new deep learning techniques.
+Nonetheless, advances in the decoders used for online control have been much slower.
+The major reason for this disparity is the inaccessibility and expense of real-world experiments.
+iBCIs are still restricted to pre-clinical or clinical research and are thus studied in only a few dozen institutions worldwide.
+In each of these institutions, experiments work with one or two users for only a few hours a week while coordinating many different research priorities.
+There is a strong need for more accessible evaluation platforms for different BCI decoders, that also address more aspects of the BCI control problem.
+Chief among these is the simple restatement that BCI is not a prediction problem, but a closed-loop control problem, as the user changes their intentions to compensate for decoder errors, both within a single trial and over the timescale of a single day.
 
-P2.
-Simulation goals and limitations. Mention of Sim2Real, that's not what we're doing in near future. Just want to eval one slice of the BCI problem, user adaptation.
+Developing a simulation platform to address the closed-loop nature of BCI is challenging.
+- Simulation goals and limitations. Mention of Sim2Real, that's not what we're doing in near future. Just want to eval one slice of the BCI problem, user adaptation.
+- The non-hubris of getting potential learning algorithms wrong.
+- What are the potential class of learning algorithms that could be learned to use a BCI decoder? Why? See also "gradient-based humphreys"
+
+% (JY: Ideally we discuss the terms in the title e.g. NeuroAI and motivate independence from neural data but this is no final project writeup.)
+
+Contributions and concrete content and takeaways.
+We aim to evaluate one slice of the BCI problem---how readily a user can regain control under a new decoder---without any recorded neural data. To do so, we replace the human with a deep network controller trained with reinforcement learning, and we replace human adaptation with additional RL fine-tuning. This approach targets controllability rather than neural realism, seeking to expose which decoders are learnable in closed-loop control.
+We present an initial simulator based on a lightweight cursor-control environment, a recurrent policy, and a family of linear decoders learned from policy state. It allows rapid testing of decoder perturbations and produces behavioral readouts (trajectories, success rates) analogous to human BCI tuning sessions.
+
+\section{Related Work}
+There are three lines of related work for this project: the use of neural networks are testbeds for theories of BCI learning, the use of RL to train normative models of motor cortex, and most relevantly, the use of simulation for BCI evaluation.
+
+\subsection{Neural Networks as Testbeds for BCI Learning}
+
+\subsection{RL to Train Normative Models of Motor Cortex}
+
+\subsection{Simulation for BCI Evaluation}
 Liang et al line of work review. Limitations, and need for data independency for full synthetic eval.
+Diff it, our contributions?
 
-P3. Overview of conceptual motivation and approach. Low-D. (Related work begins here).
 
 \section{Methods}
+Overview of conceptual motivation and approach. Low-D. (Related work begins here).
 
-Content goes here.
+Section 1: Dual plant description
+
+Section 2: Experimental setup:
+
+We study a two-stage protocol that mirrors typical BCI experiments while keeping the entire loop synthetic:
+\begin{enumerate}
+    \item \textbf{Native control training.} We train a recurrent policy (MLP + LSTM) with PPO in a 2D cursor-reaching task. The agent observes cursor and goal positions and outputs continuous actions. The resulting policy provides the ``neural population'' whose hidden state is fed to a BCI decoder.
+    \item \textbf{Decoder fitting.} We collect trajectories from the pretrained policy and fit a linear decoder that maps hidden state to actions. Decoders can be left unchanged, rotated in the action plane, or randomized to stress controllability.
+    \item \textbf{Adaptation.} The environment now executes the decoder's outputs. We continue PPO updates on the native policy head, injecting noise at the penultimate hidden state so that trajectories explore while preserving tractable log-probabilities. This simulates user adaptation without granting gradients through the decoder.
+\end{enumerate}
+
+Figure~\ref{fig:native_surgery} illustrates the switch from native readout to BCI decoder. The state-noising trick is essential: perturbing the hidden state alters downstream decoder actions and environment transitions while keeping the native action distribution differentiable for PPO. This keeps the simulator compatible with arbitrary (even non-differentiable) decoders, provided they depend only on the final hidden representation.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.7\linewidth]{figures/native_surgery.png}
+\caption{During adaptation, the environment acts on BCI decoder outputs while PPO updates still flow through the native policy head. Exploration noise is injected into the penultimate hidden state to make decoder-driven trajectories stochastic.}
+\label{fig:native_surgery}
+\end{figure}
 
 \section{Results}
 
-Content goes here.
+We evaluate on a noisy point-to-point cursor task with radial evaluation targets. The native policy reaches reliably after PPO training. We then study how adaptation performance depends on decoder structure.
+
+\textbf{Linear rotations are learnable.} Decoders that rotate the native linear readout by $45^\circ$ or $90^\circ$ relearn quickly, recovering native-level trajectories after a short tuning phase (Figure~\ref{fig:90_tune}). A $180^\circ$ rotation is learnable but substantially slower. These behaviors mirror human experiments that measure how motor cortex compensates for decoder perturbations.
+
+\textbf{Structure-free decoders are not.} A random linear map from hidden state to actions fails: reward remains near zero despite extended tuning (Figure~\ref{fig:wmp_success}). This suggests the simulator distinguishes between perturbations that preserve controllable structure and those that destroy it, a desirable property for evaluating decoder design.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.32\linewidth]{figures/90_tune_0.png}\hfill
+\includegraphics[width=0.32\linewidth]{figures/90_tune_50.png}\hfill
+\includegraphics[width=0.32\linewidth]{figures/90_tune_100.png}
+\caption{Example trajectories during adaptation to a $90^\circ$ rotated decoder: initial (left), midway (center), and converged (right).}
+\label{fig:90_tune}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.8\linewidth]{figures/wmp_success.png}
+\caption{Tuning curves for rotated decoders ($45^\circ$, $90^\circ$, $180^\circ$) and a random decoder. Rotations relearn; the random decoder stays near chance.}
+\label{fig:wmp_success}
+\end{figure}
 
 \section{Discussion}
 
-Content goes here.
+The simulator recovers two qualitative facts about BCI adaptation: structured perturbations are learnable with modest tuning, while unstructured decoders are not. Because the loop avoids neural recordings and treats decoders as black boxes, it can quickly screen decoder families for controllability before human testing. The main limitation is realism: our plant is kinematic and decoders are linear, so hidden-state structure may overstate learnability compared to motor cortex. Additionally, the noise-in-hidden-state trick constrains decoders to depend on the final policy representation.
+
+Future work will replace the kinematic cursor with richer plants (e.g., MotorNet or MuJoCo-based musculoskeletal control) to encourage cortical-like dynamics, and will evaluate nonlinear decoders trained from policy state. A key goal is to probe gaps between offline decoding metrics and closed-loop controllability, enabling more informative pre-clinical screening of BCI algorithms.
+
+Potential use cases:
+- Discriminating learning algorithms for BCI adaptation. If we can instantiate this framework with multiple different learning algorithms, and then use those to create discrminative rankings for different BCI decoders, we can identify the learning algorithms most compatible with human adaptation by comparing rankings against real world experiments.
 
 \section*{References}
 
